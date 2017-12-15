@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HttpClientManager.Rest
+namespace XHttpClient.Rest
 {
     public static class StringRestableExtension
     {

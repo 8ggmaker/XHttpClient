@@ -4,12 +4,21 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HttpClientManager.Rest.Internal
+namespace XHttpClient.Rest.Internal
 {
     internal class Request : IRequest
     {
         private HttpClientManager httpClientManager;
 
+        private HttpRequestMessage requestMessage;
+
+        Request(HttpClientManager httpClientManager, HttpRequestMessage requestMessage)
+        {
+            //todo args check
+
+            this.httpClientManager = httpClientManager;
+            this.requestMessage = requestMessage;
+        }
 
         public void Dispose()
         {
