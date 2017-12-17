@@ -8,12 +8,19 @@ namespace XHttpClient.Rest
 {
     public interface IRequest:IDisposable
     {
+        IRequest WithBearerAuthentication(string token);
+
+        IRequest WithAuthentication(string key, string value);
+
         IRequest WithHeaders(IDictionary<string, string> headers);
 
         IRequest WithQueryString(IDictionary<string, string> queryStrings);
 
+        IRequest WithContentType(string type);
+
+
         IRequest WithContent(HttpContent content);
 
-        Task<T> ReadResponse<T>();
+        Task<T> ReadResponseAsync<T>();
     }
 }

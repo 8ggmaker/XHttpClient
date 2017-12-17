@@ -1,46 +1,110 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using XHttpClient.Exception;
 
 namespace XHttpClient.Rest.Internal
 {
+    
+    internal class EntityHeader
+    {
+        /// <summary>
+        /// ref:https://www.w3.org/Protocols/rfc2616/rfc2616-sec7.html#sec7.1
+        /// </summary>
+        private static HashSet<string> entityHeaders = new HashSet<string>{"content-type","content-length",
+            "content-range","content-encoding","content-language","content-location","content-md5","expires",
+            "last-modified","extension-header"};
+    }
+
     internal class Request : IRequest
     {
-        private HttpClientManager httpClientManager;
+        private bool disposed = false;
+
+        private IHttpClient httpClient;
 
         private HttpRequestMessage requestMessage;
 
-        Request(HttpClientManager httpClientManager, HttpRequestMessage requestMessage)
+        Request(IHttpClient httpClient, HttpRequestMessage requestMessage)
         {
-            //todo args check
+            this.httpClient = httpClient ?? throw new HttpClientException(new Error
+            {
+                Code = ErrorCode.ArgsNullException.ToString(),
+                Message = "httpclient is null"
+            });
 
-            this.httpClientManager = httpClientManager;
-            this.requestMessage = requestMessage;
+            this.requestMessage = requestMessage ?? throw new HttpClientException(new Error
+            {
+                Code = ErrorCode.ArgsNullException.ToString(),
+                Message = $"http request message is null"
+            });
         }
 
-        public void Dispose()
+        public IRequest WithAuthentication(string scheme, string parameter)
         {
-            throw new NotImplementedException();
+            this.requestMessage.Headers.Authorization = new AuthenticationHeaderValue(scheme, parameter);
+            return this;
         }
 
-        public Task<T> ReadResponse<T>()
+        public IRequest WithBearerAuthentication(string parameter)
         {
-            throw new NotImplementedException();
+            this.requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", parameter);
+            return this;
         }
 
         public IRequest WithContent(HttpContent content)
         {
-            throw new NotImplementedException();
+            if (content != null)
+            {
+                this.requestMessage.Content = content;
+            }
+            return this;
+        }
+
+        public IRequest WithContentType(string type)
+        {
+            if (string.IsNullOrWhiteSpace(type))
+            {
+                throw new HttpClientException(new Error
+                {
+                    Code = ErrorCode.ArgsNullException.ToString(),
+                    Message = "content-type is null or empty"
+                });
+            }
+
+            this.requestMessage.Headers.Add("Content-Type", type);
+            return this;
         }
 
         public IRequest WithHeaders(IDictionary<string, string> headers)
         {
-            throw new NotImplementedException();
+            if (headers != null)
+            {
+                using (var enumerator = headers.GetEnumerator())
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        var keyvalPair = enumerator.Current;
+                        this.requestMessage.Headers.Add(keyvalPair.Key, keyvalPair.Value);
+                    }
+                }
+            }
+
+            return this;
         }
 
         public IRequest WithQueryString(IDictionary<string, string> queryStrings)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> ReadResponseAsync<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

@@ -14,7 +14,25 @@ namespace XHttpClient.Exception
 
         public override string ToString()
         {
-            throw new NotImplementedException();
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrWhiteSpace(Code))
+            {
+                sb.Append($" Code:{Code}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(Message))
+            {
+                sb.Append($" Message:{Message}");
+            }
+
+            return sb.ToString();
         }
+    }
+
+    public enum ErrorCode
+    {
+        ArgsNullException = 1,
+        InvalidRequest,
+
     }
 }

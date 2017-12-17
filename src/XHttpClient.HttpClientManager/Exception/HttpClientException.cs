@@ -8,7 +8,7 @@ namespace XHttpClient.Exception
     {
         public Error Error { get; private set; }
 
-        public HttpClientException(Error error, System.Exception innerException)
+        public HttpClientException(Error error, System.Exception innerException = null)
             : base(error?.ToString(), innerException)
         {
             this.Error = error;

@@ -8,13 +8,7 @@ namespace XHttpClient.Rest
 {
     public interface IRestable
     {
-
-        Task<T> GetAsync<T>();
-
-        Task<T> PostAsync<T>();
-
-        Task<T> SendAsync<T>();
-
+        IRequest GetRequest(string method);
     }
 
 
