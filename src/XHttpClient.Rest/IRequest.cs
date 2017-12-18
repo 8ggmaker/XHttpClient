@@ -14,10 +14,9 @@ namespace XHttpClient.Rest
 
         IRequest WithHeaders(IDictionary<string, string> headers);
 
-        IRequest WithQueryString(IDictionary<string, string> queryStrings);
+        IRequest WithQueryString(IDictionary<string, string> queryString);
 
         IRequest WithContentType(string type);
-
 
         IRequest WithContent(HttpContent content);
 

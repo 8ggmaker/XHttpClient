@@ -26,7 +26,7 @@ namespace XHttpClient.Rest.Internal
 
         private HttpRequestMessage requestMessage;
 
-        Request(IHttpClient httpClient, HttpRequestMessage requestMessage)
+        internal Request(IHttpClient httpClient, HttpRequestMessage requestMessage)
         {
             this.httpClient = httpClient ?? throw new HttpClientException(new Error
             {
@@ -49,7 +49,7 @@ namespace XHttpClient.Rest.Internal
 
         public IRequest WithBearerAuthentication(string parameter)
         {
-            this.requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", parameter);
+            this.WithAuthentication("Bearer", parameter);
             return this;
         }
 
@@ -94,9 +94,10 @@ namespace XHttpClient.Rest.Internal
             return this;
         }
 
-        public IRequest WithQueryString(IDictionary<string, string> queryStrings)
+        public IRequest WithQueryString(IDictionary<string, string> queryString)
         {
-            throw new NotImplementedException();
+            this.requestMessage.RequestUri = UrlBuilder.AppendQueryString(this.requestMessage.RequestUri, queryString);
+            return this;
         }
 
         public Task<T> ReadResponseAsync<T>()
