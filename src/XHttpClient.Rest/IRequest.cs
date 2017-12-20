@@ -26,6 +26,7 @@ namespace XHttpClient.Rest
         IRequest WithCancellationToken(CancellationToken cancellationToken, Action cancelCallBack = null);
 
         IRequest WithValidStatusCode(IEnumerable<HttpStatusCode> statusCodeCollection);
+
         Task<T> ReadResponseAsync<T>();
 
         TaskAwaiter<IResponse> GetAwaiter();
