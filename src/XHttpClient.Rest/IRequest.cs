@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XHttpClient.Rest
@@ -20,6 +23,13 @@ namespace XHttpClient.Rest
 
         IRequest WithContent(HttpContent content);
 
+        IRequest WithCancellationToken(CancellationToken cancellationToken, Action cancelCallBack = null);
+
+        IRequest WithValidStatusCode(IEnumerable<HttpStatusCode> statusCodeCollection);
         Task<T> ReadResponseAsync<T>();
+
+        TaskAwaiter<IResponse> GetAwaiter();
+
+        
     }
 }

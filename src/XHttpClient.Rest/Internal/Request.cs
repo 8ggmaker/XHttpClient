@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using XHttpClient.Exception;
 
@@ -25,6 +28,12 @@ namespace XHttpClient.Rest.Internal
         private IHttpClient httpClient;
 
         private HttpRequestMessage requestMessage;
+
+        private IEnumerable<HttpStatusCode> validStatusCodes = new HttpStatusCode[] { HttpStatusCode.OK };
+
+        private CancellationToken cancellationToken = CancellationToken.None;
+
+        private Action requestCancelCallBack;
 
         internal Request(IHttpClient httpClient, HttpRequestMessage requestMessage)
         {
@@ -100,14 +109,39 @@ namespace XHttpClient.Rest.Internal
             return this;
         }
 
-        public Task<T> ReadResponseAsync<T>()
+        public TaskAwaiter<IResponse> GetAwaiter()
+        {
+           return this.SendAsync().GetAwaiter();
+        }
+
+        public async Task<T> ReadResponseAsync<T>()
         {
             throw new NotImplementedException();
+        }
+
+        private async Task<IResponse> SendAsync()
+        {
+            var httpResponse = await this.httpClient.SendAsync(this.requestMessage, HttpCompletionOption.ResponseHeadersRead,cancellationToken).ConfigureAwait(false);
+
+            return new Response(httpResponse);
         }
 
         public void Dispose()
         {
             throw new NotImplementedException();
+        }
+
+        public IRequest WithCancellationToken(CancellationToken cancellationToken, Action cancelCallBack = null)
+        {
+            this.cancellationToken = cancellationToken;
+            this.requestCancelCallBack = cancelCallBack;
+            return this;
+        }
+
+        public IRequest WithValidStatusCode(IEnumerable<HttpStatusCode> statusCodeCollection)
+        {
+            this.validStatusCodes = statusCodeCollection;
+            return this;
         }
     }
 }

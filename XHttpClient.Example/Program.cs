@@ -17,5 +17,12 @@ namespace XHttpClient.Example
                 .GetRequest("GET")
                 .ReadResponseAsync<string>().Result;
         }
+
+        static async Task MainAsync()
+        {
+            String url = "https://www.microsoft.com";
+
+            var res = await url.ToRestable().GetRequest("GET");
+        }
     }
 }

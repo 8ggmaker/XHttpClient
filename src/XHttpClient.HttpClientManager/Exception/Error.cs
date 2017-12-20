@@ -33,6 +33,6 @@ namespace XHttpClient.Exception
     {
         ArgsNullException = 1,
         InvalidRequest,
-
+        InnerException,
     }
 }
